@@ -13,3 +13,8 @@ variable "all_workspace_team_writer" {
   description = "List of team roles that should receive writer access across all workspace schemas"
   type        = list(string)
 }
+
+variable "snowflake_region" {
+  description = "snowflake region details"
+  type        = string
+}

@@ -1,8 +1,8 @@
 terraform {
   required_providers {
     snowflake = {
-      source  = "Snowflake-Labs/snowflake"
-      version = "~> 0.60.0" # or latest stable version
+      source  = "snowflake-labs/snowflake"
+      version = ">= 0.50.0"  # check for latest stable
     }
   }
 }
@@ -14,5 +14,5 @@ provider "snowflake" {
   username = "KIRAN123"
   password = "Qawsedrf@@@131"
   role     = "ACCOUNTADMIN"      # optional, defaults to PUBLICs
-#  region   = var.snowflake_region    # optional if account includes region
+  #region   = var.snowflake_region    # optional if account includes region
 }

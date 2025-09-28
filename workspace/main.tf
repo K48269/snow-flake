@@ -1,8 +1,13 @@
 
 
 resource "snowflake_database" "workspace" {
-  name                         = "WORKSPACE"
+  name                         = "WORKSPACE_NEW"
   data_retention_time_in_days = 1
+  
+  lifecycle {
+    prevent_destroy = true
+    # ignore_changes = all
+}
 }
 
 resource "snowflake_schema" "workspace_schema" {
@@ -40,16 +45,44 @@ resource "snowflake_schema_grant" "reader_grant" {
   with_grant_option = false
 }
 
+
 resource "snowflake_role_grants" "grant_writer_to_team" {
-  for_each = var.workspace
+  for_each = {
+    for k, v in var.workspace : k => v
+    if length(concat(v.relationship_team_writer, var.all_workspace_team_writer)) > 0
+  }
 
   role_name = snowflake_role.writer[each.key].name
   roles     = concat(each.value.relationship_team_writer, var.all_workspace_team_writer)
 }
 
+
+
 resource "snowflake_role_grants" "grant_reader_to_team" {
-  for_each = var.workspace
+  for_each = {
+    for k, v in var.workspace : k => v
+    if length(v.relationship_team_reader) > 0
+  }
 
   role_name = snowflake_role.reader[each.key].name
   roles     = each.value.relationship_team_reader
 }
+
+resource "snowflake_role" "team_roles" {
+  for_each = toset([
+    "DIGITALDA",
+    "FPNA",
+    "SALESMKTG",
+    "RISK_STRATEGY",
+    "WORKSPACE_CREDIT_RISK",
+    "DIGITALDA_STAGE",
+    "DIGITALDA_DBT_STAGE",
+    "DIGITALDA_DBT",
+    "SALESMKTG_STAGE",
+    "PENG",
+    "CREDIT_RISK"
+  ])
+  name = each.key
+}
+
+

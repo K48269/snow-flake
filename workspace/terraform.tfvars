@@ -1,5 +1,7 @@
 all_workspace_team_writer = ["PENG"]
 
+snowflake_region = "ap-south-1"
+
 workspace = {
   DIGITALDA = {
     name                        = "DIGITALDA"
