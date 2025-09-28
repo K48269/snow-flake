@@ -14,8 +14,7 @@ resource "snowflake_schema" "workspace_schema" {
   for_each   = var.workspace
   name       = each.value.name
   database   = snowflake_database.workspace.name
-  is_managed = true
-}
+  }
 
 resource "snowflake_role" "writer" {
   for_each = var.workspace
@@ -27,7 +26,7 @@ resource "snowflake_role" "reader" {
   name     = "_WORKSPACE__${each.value.name}__READER"
 }
 
-resource "snowflake_schema_grant" "writer_grant" {
+resource "snowflake_grant_privileges_to_account_role" "writer_grant" {
   for_each          = var.workspace
   database_name     = snowflake_database.workspace.name
   schema_name       = each.value.name
@@ -36,7 +35,7 @@ resource "snowflake_schema_grant" "writer_grant" {
   with_grant_option = false
 }
 
-resource "snowflake_schema_grant" "reader_grant" {
+resource "snowflake_grant_privileges_to_account_role" "reader_grant" {
   for_each          = var.workspace
   database_name     = snowflake_database.workspace.name
   schema_name       = each.value.name
@@ -46,7 +45,7 @@ resource "snowflake_schema_grant" "reader_grant" {
 }
 
 
-resource "snowflake_role_grants" "grant_writer_to_team" {
+resource "snowflake_grant_account_role" "grant_writer_to_team" {
   for_each = {
     for k, v in var.workspace : k => v
     if length(concat(v.relationship_team_writer, var.all_workspace_team_writer)) > 0
@@ -58,7 +57,7 @@ resource "snowflake_role_grants" "grant_writer_to_team" {
 
 
 
-resource "snowflake_role_grants" "grant_reader_to_team" {
+resource "snowflake_grant_account_role" "grant_reader_to_team" {
   for_each = {
     for k, v in var.workspace : k => v
     if length(v.relationship_team_reader) > 0

@@ -1,5 +1,5 @@
 # Writer grants
-resource "snowflake_role_grants" "writers" {
+resource "snowflake_grant_account_role" "writers" {
   for_each = var.workspace_map
 
   role_name = "_WORKSPACE__${upper(each.value.name)}__WRITER"
@@ -10,7 +10,7 @@ resource "snowflake_role_grants" "writers" {
 }
 
 # Reader grants
-resource "snowflake_role_grants" "readers" {
+resource "snowflake_grant_account_role" "readers" {
   for_each = {
     for k, v in var.workspace_map : k => v if length(v.relationship_team_reader) > 0
   }
